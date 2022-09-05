@@ -3,18 +3,7 @@ import PorpTypes from "prop-types";
 import Shelf from "../components/Shelf";
 import { Link } from "react-router-dom";
 
-const Home = ({ books, changeBook }) => {
-  const [reading, setReading] = useState([]);
-  const [wantToRead, setWantToRead] = useState([]);
-  const [read, setRead] = useState([]);
-
-  //put the books in the right shelf
-  useEffect(() => {
-    setReading(books.filter((book) => book.shelf === "currentlyReading"));
-    setWantToRead(books.filter((book) => book.shelf === "wantToRead"));
-    setRead(books.filter((book) => book.shelf === "read"));
-  }, [books, setReading, setWantToRead, setRead]);
-
+const Home = ({ read, reading, wantToRead, changeBook }) => {
   return (
     <div className="list-books">
       <div className="list-books-title">
@@ -39,8 +28,10 @@ const Home = ({ books, changeBook }) => {
 };
 
 Home.propTypes = {
-  books: PorpTypes.array.isRequired,
   changeBook: PorpTypes.func.isRequired,
+  read: PorpTypes.array.isRequired,
+  reading: PorpTypes.array.isRequired,
+  wantToRead: PorpTypes.array.isRequired,
 };
 
 export default Home;

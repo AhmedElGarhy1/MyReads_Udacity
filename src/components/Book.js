@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import PorpTypes from "prop-types";
 const Book = ({ book, changeBook }) => {
+  const [localShelf, setLocalShelf] = useState(book.shelf);
   const handleChange = (event) => {
     const shelf = event.target.value;
+    setLocalShelf(shelf);
     changeBook(book, shelf);
   };
   const shelves = [
@@ -25,10 +27,12 @@ const Book = ({ book, changeBook }) => {
           }}
         ></div>
         <div className="book-shelf-changer">
-          <select value={book.shelf || "none"} onChange={handleChange}>
+          <select value={localShelf || "none"} onChange={handleChange}>
             <option disabled>Move to...</option>
             {shelves.map((shelve, i) => (
-              <option value={shelve.value}>{shelve.name}</option>
+              <option key={i} value={shelve.value}>
+                {shelve.name}
+              </option>
             ))}
           </select>
         </div>

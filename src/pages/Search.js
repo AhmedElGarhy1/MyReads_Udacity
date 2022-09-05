@@ -5,20 +5,25 @@ import { Link } from "react-router-dom";
 import Book from "../components/Book";
 import { search } from "../utils/BooksAPI";
 
-const Search = ({ changeBook }) => {
+const Search = ({ changeBook, homeBooks }) => {
   const [books, setBooks] = useState([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(false);
   // debounce to send the query after some seconds
   const debouncedSearch = useRef(
     debounce(
-      (value) =>
-        search(value.trim(), 10).then((books) => {
-          if (books.error) {
+      (value, homeBooks) =>
+        search(value.trim(), 10).then((searchBooks) => {
+          if (searchBooks.error) {
             setBooks([]);
             return setError(true);
           }
-          setBooks(books);
+          searchBooks = searchBooks.map((book) => {
+            return (
+              homeBooks.find((homeBook) => homeBook.id === book.id) || book
+            );
+          });
+          setBooks(searchBooks);
         }),
       400
     )
@@ -28,7 +33,7 @@ const Search = ({ changeBook }) => {
     setQuery(value);
     if (!value) return setBooks([]);
     setError(false);
-    debouncedSearch(value);
+    debouncedSearch(value, homeBooks);
   };
   return (
     <div className="search-books">
@@ -49,7 +54,8 @@ const Search = ({ changeBook }) => {
       <div className="search-books-results">
         <ol className="books-grid">
           {error && <div>Can't Find any Book</div>}
-          {books &&
+          {!error &&
+            books &&
             books.map((book) => (
               <li key={book.id}>
                 <Book book={book} changeBook={changeBook} />
@@ -63,6 +69,7 @@ const Search = ({ changeBook }) => {
 
 Search.porpTypes = {
   changeBook: PorpTypes.func.isRequired,
+  homeBooks: PorpTypes.array.isRequired,
 };
 
 export default Search;
